@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="SmartCalc Hub — All-in-One Calculator for Students, Children, Adults & Professionals. Age, BMI, EMI, Percentage, Unit Converter, Currency.">
+  <meta name="keywords" content="calculator, age calculator, BMI, EMI, percentage, unit converter, currency converter, smartcalc">
+  <meta name="author" content="SmartCalc Hub">
+  <meta property="og:title" content="SmartCalc Hub — All-in-One Calculator">
+  <meta property="og:description" content="Free professional calculators for everyone.">
+  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#0a0e1a">
+  <title>SmartCalc Hub — All-in-One Calculator</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Nunito:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Chart.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" defer></script>
+  <!-- jsPDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
+
+  <style>
+  /* ============================================
+   SMARTCALC HUB — style.css
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Nunito:wght@300;400;600;700&display=swap');
+
+/* ---- CSS VARIABLES ---- */
+:root {
+  --bg:        #080c14;
+  --bg2:       #0f1520;
+  --card:      rgba(255,255,255,0.05);
+  --card-h:    rgba(255,255,255,0.09);
+  --txt:       #e8eeff;
+  --txt2:      #8899bb;
+  --muted:     #4d5e88;
+  --blue:      #5b8fff;
+  --cyan:      #00d9b4;
+  --pink:      #ff6b9d;
+  --orange:    #ff9b44;
+  --grad:      linear-gradient(135deg,#5b8fff 0%,#00d9b4 100%);
+  --border:    rgba(255,255,255,0.08);
+  --border-h:  rgba(91,143,255,0.45);
+  --shadow:    0 8px 32px rgba(0,0,0,0.45);
+  --shadow-lg: 0 20px 60px rgba(0,0,0,0.55);
+  --r-sm: 8px; --r-md: 16px; --r-lg: 24px;
+  --ease: all .3s cubic-bezier(.4,0,.2,1);
+}
+[data-theme="light"] {
+  --bg:       #eef2ff;
+  --bg2:      #e2e8ff;
+  --card:     rgba(255,255,255,0.75);
+  --card-h:   rgba(255,255,255,0.95);
+  --txt:      #1a1f3a;
+  --txt2:     #4a5580;
+  --muted:    #8895cc;
+  --blue:     #3b6fe0;
+  --cyan:     #00a887;
+  --border:   rgba(0,0,0,0.08);
+  --border-h: rgba(59,111,224,0.4);
+  --shadow:   0 8px 32px rgba(0,0,0,0.1);
+  --shadow-lg:0 20px 60px rgba(0,0,0,0.15);
+}
+
+/* ---- RESET ---- */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;font-size:16px}
+body{
+  font-family:'Nunito',sans-serif;
+  background:var(--bg);color:var(--txt);
+  min-height:100vh;overflow-x:hidden;
+  transition:background .3s,color .3s;
+}
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 80% 55% at 15% 10%,rgba(91,143,255,.07) 0%,transparent 65%),
+    radial-gradient(ellipse 65% 55% at 85% 85%,rgba(0,217,180,.05) 0%,transparent 65%);
+}
+h1,h2,h3,h4{font-family:'Syne',sans-serif;line-height:1.2}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;border:none;background:none;font-family:inherit}
+input,select,textarea{font-family:inherit}
+img{max-width:100%}
+
+/* ---- HEADER ---- */
+.header{
+  position:fixed;top:0;left:0;right:0;height:70px;z-index:1000;
+  background:rgba(8,12,20,.88);backdrop-filter:blur(22px);
+  -webkit-backdrop-filter:blur(22px);
+  border-bottom:1px solid var(--border);
+  transition:var(--ease);
+}
+[data-theme="light"] .header{background:rgba(238,242,255,.88)}
+.header-inner{
+  max-width:1240px;margin:0 auto;height:100%;
+  padding:0 24px;display:flex;align-items:center;gap:24px;
+}
+.logo{display:flex;align-items:center;gap:8px;white-space:nowrap;flex-shrink:0}
+.logo-icon{font-size:1.4rem;filter:drop-shadow(0 0 8px var(--blue))}
+.logo-text{font-family:'Syne',sans-serif;font-size:1.18rem;font-weight:700}
+.logo-accent{color:var(--blue)}
+.nav{display:flex;gap:2px;flex:1;overflow-x:auto;scrollbar-width:none}
+.nav::-webkit-scrollbar{display:none}
+.nav-link{
+  padding:7px 13px;border-radius:var(--r-sm);
+  font-size:.82rem;font-weight:700;color:var(--txt2);
+  white-space:nowrap;transition:var(--ease);
+}
+.nav-link:hover{color:var(--txt);background:var(--card)}
+.header-actions{display:flex;align-items:center;gap:10px;margin-left:auto}
+.theme-toggle{
+  width:40px;height:40px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--card);border:1px solid var(--border);
+  font-size:1.1rem;transition:var(--ease);
+}
+.theme-toggle:hover{background:var(--card-h);border-color:var(--border-h);transform:rotate(18deg)}
+.hamburger{display:none;flex-direction:column;gap:5px;padding:8px}
+.hamburger span{display:block;width:22px;height:2px;background:var(--txt);border-radius:2px;transition:var(--ease)}
+.hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.hamburger.open span:nth-child(2){opacity:0}
+.hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+
+/* ---- LAYOUT ---- */
+.main{min-height:calc(100vh - 70px);padding-top:70px;position:relative;z-index:1}
+.section{display:none;animation:fadeUp .4s ease}
+.section.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+
+/* ---- HERO ---- */
+.hero{text-align:center;padding:72px 20px 52px;max-width:780px;margin:0 auto}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:6px 18px;border-radius:50px;
+  background:var(--card);border:1px solid var(--border);
+  font-size:.78rem;font-weight:700;color:var(--cyan);
+  margin-bottom:22px;
+  animation:glow 3s infinite;
+}
+@keyframes glow{0%,100%{box-shadow:0 0 0 0 rgba(0,217,180,0)}50%{box-shadow:0 0 0 7px rgba(0,217,180,.1)}}
+.hero-title{font-size:clamp(1.9rem,5vw,3.4rem);font-weight:800;margin-bottom:18px}
+.gradient-text{
+  background:var(--grad);-webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;background-clip:text;
+}
+.hero-subtitle{font-size:1rem;color:var(--txt2);line-height:1.65;margin-bottom:36px}
+.search-container{position:relative;max-width:480px;margin:0 auto}
+.search-icon{position:absolute;left:16px;top:50%;transform:translateY(-50%);pointer-events:none;font-size:.95rem}
+.search-input{
+  width:100%;padding:13px 44px 13px 42px;border-radius:50px;
+  border:1px solid var(--border);background:var(--card);
+  color:var(--txt);font-size:.9rem;outline:none;
+  backdrop-filter:blur(10px);transition:var(--ease);
+}
+.search-input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(91,143,255,.18)}
+.search-input::placeholder{color:var(--muted)}
+.search-clear{
+  position:absolute;right:14px;top:50%;transform:translateY(-50%);
+  font-size:.78rem;color:var(--muted);display:none;
+  padding:4px;transition:var(--ease);
+}
+.search-clear.visible{display:block}
+.search-clear:hover{color:var(--txt)}
+.no-results{text-align:center;color:var(--txt2);padding:40px 20px;font-size:.9rem}
+
+/* ---- CALCULATOR CARDS ---- */
+.categories-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(290px,1fr));
+  gap:20px;max-width:1240px;margin:0 auto;
+  padding:0 24px 80px;
+}
+.calc-card{
+  position:relative;background:var(--card);border:1px solid var(--border);
+  border-radius:var(--r-lg);padding:28px 24px 22px;
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  transition:var(--ease);overflow:hidden;
+}
+.calc-card::after{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:var(--grad);opacity:0;transition:var(--ease);
+}
+.calc-card:hover{transform:translateY(-5px);border-color:var(--border-h);box-shadow:var(--shadow-lg);background:var(--card-h)}
+.calc-card:hover::after{opacity:1}
+.calc-card-icon{font-size:2.4rem;margin-bottom:14px;display:block;line-height:1}
+.calc-card-title{font-size:1.2rem;font-weight:700;margin-bottom:7px}
+.calc-card-desc{font-size:.845rem;color:var(--txt2);line-height:1.55;margin-bottom:16px}
+.calc-card-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px}
+.calc-card-tags span{
+  padding:3px 10px;border-radius:50px;
+  background:rgba(91,143,255,.1);border:1px solid rgba(91,143,255,.2);
+  font-size:.72rem;font-weight:700;color:var(--blue);
+}
+.calc-card-btn{
+  width:100%;padding:10px 18px;border-radius:var(--r-sm);
+  background:var(--grad);color:#fff;font-weight:700;
+  font-size:.84rem;font-family:'Nunito',sans-serif;transition:var(--ease);
+}
+.calc-card-btn:hover{opacity:.88;transform:translateY(-2px);box-shadow:0 6px 20px rgba(91,143,255,.4)}
+.fav-btn{
+  position:absolute;top:14px;right:14px;
+  font-size:1.15rem;color:var(--muted);transition:var(--ease);padding:5px;
+}
+.fav-btn:hover{color:var(--pink);transform:scale(1.25)}
+.fav-btn.active{color:var(--pink)}
+
+/* ---- GLASS CARD ---- */
+.glass-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--r-lg);padding:28px;
+  backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  box-shadow:var(--shadow);
+}
+
+/* ---- CALC PAGES ---- */
+.calc-page{max-width:980px;margin:0 auto;padding:36px 20px 80px}
+.calc-header{display:flex;align-items:center;gap:18px;margin-bottom:28px}
+.back-btn{
+  padding:8px 15px;border-radius:var(--r-sm);
+  background:var(--card);border:1px solid var(--border);
+  color:var(--txt2);font-size:.82rem;font-weight:700;
+  font-family:'Nunito',sans-serif;transition:var(--ease);white-space:nowrap;
+}
+.back-btn:hover{color:var(--txt);border-color:var(--border-h)}
+.calc-title-group{display:flex;align-items:center;gap:10px}
+.calc-title-group span{font-size:1.7rem}
+.calc-title-group h2{font-size:1.65rem;font-weight:800}
+.calc-body{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+
+/* ---- FORM ELEMENTS ---- */
+.form-group{margin-bottom:18px}
+.form-group label{
+  display:block;font-size:.75rem;font-weight:700;
+  text-transform:uppercase;letter-spacing:.055em;
+  color:var(--txt2);margin-bottom:7px;
+}
+.required{color:var(--pink)}
+.optional{font-size:.7rem;text-transform:none;letter-spacing:0;color:var(--muted);font-weight:400}
+.input-field{
+  width:100%;padding:11px 15px;border-radius:var(--r-sm);
+  border:1px solid var(--border);background:rgba(255,255,255,.03);
+  color:var(--txt);font-size:.9rem;outline:none;
+  transition:var(--ease);-webkit-appearance:none;appearance:none;
+}
+[data-theme="light"] .input-field{background:rgba(255,255,255,.7)}
+.input-field:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(91,143,255,.16)}
+.input-field::placeholder{color:var(--muted)}
+.select-field{cursor:pointer}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+/* ---- RANGE SLIDER ---- */
+.range-slider{
+  width:100%;padding:0;margin-top:9px;height:4px;
+  -webkit-appearance:none;appearance:none;
+  border-radius:2px;outline:none;border:none;
+  background:linear-gradient(to right,var(--blue) 0%,var(--border) 0%);
+  cursor:pointer;
+}
+.range-slider::-webkit-slider-thumb{
+  -webkit-appearance:none;width:18px;height:18px;
+  border-radius:50%;background:var(--blue);cursor:pointer;
+  box-shadow:0 0 0 3px rgba(91,143,255,.22);transition:var(--ease);
+}
+.range-slider::-webkit-slider-thumb:hover{box-shadow:0 0 0 7px rgba(91,143,255,.28)}
+.range-slider::-moz-range-thumb{
+  width:18px;height:18px;border-radius:50%;background:var(--blue);
+  cursor:pointer;border:none;box-shadow:0 0 0 3px rgba(91,143,255,.22);
+}
+.range-labels{display:flex;justify-content:space-between;font-size:.72rem;color:var(--muted);margin-top:4px}
+
+/* ---- BUTTONS ---- */
+.btn-group{display:flex;gap:9px;margin-top:22px;flex-wrap:wrap}
+.btn-primary{
+  flex:1;padding:12px 18px;border-radius:var(--r-sm);
+  background:var(--grad);color:#fff;font-weight:700;
+  font-family:'Nunito',sans-serif;font-size:.88rem;
+  transition:var(--ease);min-width:100px;
+}
+.btn-primary:hover{opacity:.88;transform:translateY(-2px);box-shadow:0 6px 24px rgba(91,143,255,.4)}
+.btn-secondary{
+  padding:12px 15px;border-radius:var(--r-sm);
+  background:var(--card);border:1px solid var(--border);
+  color:var(--txt);font-weight:600;font-family:'Nunito',sans-serif;
+  font-size:.88rem;transition:var(--ease);
+}
+.btn-secondary:hover{border-color:var(--border-h);background:var(--card-h)}
+.btn-danger{
+  padding:7px 14px;border-radius:var(--r-sm);
+  background:rgba(255,107,107,.1);border:1px solid rgba(255,107,107,.3);
+  color:#ff6b6b;font-size:.82rem;font-family:'Nunito',sans-serif;
+  font-weight:700;transition:var(--ease);
+}
+.btn-danger:hover{background:rgba(255,107,107,.2)}
+
+/* ---- TABS ---- */
+.tab-group{
+  display:flex;gap:3px;background:rgba(0,0,0,.2);
+  padding:4px;border-radius:var(--r-sm);margin-bottom:22px;
+  overflow-x:auto;scrollbar-width:none;flex-wrap:wrap;
+}
+.tab-group::-webkit-scrollbar{display:none}
+.tab-btn{
+  flex:1;padding:8px 10px;border-radius:6px;
+  font-size:.78rem;font-weight:700;font-family:'Nunito',sans-serif;
+  color:var(--txt2);white-space:nowrap;transition:var(--ease);min-width:fit-content;
+}
+.tab-btn.active{background:var(--grad);color:#fff}
+.tab-content{display:none}
+.tab-content.active{display:block;animation:fadeUp .25s ease}
+
+/* ---- UNIT TOGGLES ---- */
+.unit-toggle-group{display:flex;align-items:center;gap:12px;margin-bottom:18px;flex-wrap:wrap}
+.unit-toggle-group>label{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.055em;color:var(--txt2)}
+.toggle-sw-group{display:flex;gap:3px;background:rgba(0,0,0,.2);padding:3px;border-radius:var(--r-sm)}
+.toggle-opt{
+  padding:6px 14px;border-radius:6px;font-size:.78rem;
+  font-weight:700;font-family:'Nunito',sans-serif;color:var(--txt2);transition:var(--ease);
+}
+.toggle-opt.active{background:var(--blue);color:#fff}
+
+/* ---- RESULT CARD ---- */
+.result-card{animation:fadeUp .35s ease}
+.result-card h3{font-size:1rem;color:var(--txt2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+.result-big{
+  font-family:'Syne',sans-serif;font-size:1.75rem;font-weight:800;
+  background:var(--grad);-webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;background-clip:text;
+  margin:14px 0;word-break:break-word;
+}
+.result-formula{
+  font-size:.82rem;color:var(--txt2);margin-bottom:16px;
+  padding:11px 14px;background:rgba(0,0,0,.18);
+  border-radius:var(--r-sm);font-family:monospace;word-break:break-all;
+}
+[data-theme="light"] .result-formula{background:rgba(0,0,0,.06)}
+.result-actions{
+  display:flex;gap:7px;flex-wrap:wrap;
+  margin-top:18px;padding-top:18px;border-top:1px solid var(--border);
+}
+.action-btn{
+  flex:1;padding:8px 10px;border-radius:var(--r-sm);
+  background:var(--card);border:1px solid var(--border);
+  color:var(--txt2);font-size:.76rem;font-weight:700;
+  font-family:'Nunito',sans-serif;transition:var(--ease);
+  min-width:70px;text-align:center;
+}
+.action-btn:hover{background:var(--card-h);border-color:var(--border-h);color:var(--txt)}
+
+/* ---- AGE CALCULATOR ---- */
+.age-display{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:16px 0}
+.age-unit{
+  text-align:center;padding:16px 8px;
+  background:rgba(91,143,255,.08);
+  border:1px solid rgba(91,143,255,.16);border-radius:var(--r-md);
+}
+.age-unit-val{
+  font-family:'Syne',sans-serif;font-size:1.9rem;
+  font-weight:800;color:var(--blue);display:block;
+}
+.age-unit-lbl{font-size:.7rem;color:var(--txt2);text-transform:uppercase;letter-spacing:.05em;display:block;margin-top:4px}
+.age-details{display:grid;gap:6px;margin-bottom:14px}
+.age-row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:8px 12px;background:rgba(0,0,0,.14);border-radius:6px;font-size:.84rem;
+}
+[data-theme="light"] .age-row{background:rgba(0,0,0,.05)}
+.age-row span:first-child{color:var(--txt2)}
+.age-row span:last-child{font-weight:700}
+.future-age{
+  padding:11px 14px;background:rgba(0,217,180,.08);
+  border:1px solid rgba(0,217,180,.2);border-radius:var(--r-sm);
+  font-size:.84rem;color:var(--cyan);line-height:1.5;
+}
+
+/* ---- BMI ---- */
+.bmi-score{
+  font-family:'Syne',sans-serif;font-size:3.8rem;font-weight:800;
+  text-align:center;margin:12px 0 6px;
+}
+.bmi-category{
+  text-align:center;font-size:1rem;font-weight:700;
+  padding:7px 18px;border-radius:50px;display:block;margin-bottom:18px;
+}
+.cat-under{background:rgba(100,180,255,.14);color:#64b4ff;border:1px solid rgba(100,180,255,.28)}
+.cat-normal{background:rgba(63,185,80,.14);color:#3fb950;border:1px solid rgba(63,185,80,.28)}
+.cat-over{background:rgba(255,155,68,.14);color:#ff9b44;border:1px solid rgba(255,155,68,.28)}
+.cat-obese{background:rgba(255,107,107,.14);color:#ff6b6b;border:1px solid rgba(255,107,107,.28)}
+.bmi-meter-wrap{margin:18px 0}
+.bmi-meter{
+  height:12px;border-radius:6px;position:relative;overflow:visible;
+  background:linear-gradient(to right,#64b4ff 0%,#3fb950 28%,#ff9b44 64%,#ff6b6b 100%);
+}
+.bmi-meter-pointer{
+  position:absolute;top:-7px;width:26px;height:26px;
+  border-radius:50%;background:#fff;border:3px solid var(--blue);
+  box-shadow:0 2px 10px rgba(0,0,0,.35);transform:translateX(-50%);
+  transition:left .85s cubic-bezier(.34,1.56,.64,1);
+}
+.bmi-meter-labels{display:flex;justify-content:space-between;margin-top:10px;font-size:.7rem;color:var(--muted)}
+.bmi-table{display:grid;gap:5px;margin-top:14px}
+.bmi-tr{
+  display:flex;justify-content:space-between;
+  padding:7px 12px;border-radius:6px;font-size:.8rem;
+}
+.bmi-tr.highlight{background:rgba(91,143,255,.14);border:1px solid rgba(91,143,255,.22)}
+
+/* ---- EMI ---- */
+.emi-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:14px 0 20px}
+.emi-result-item{
+  text-align:center;padding:15px 10px;
+  background:rgba(0,0,0,.18);border-radius:var(--r-md);
+}
+[data-theme="light"] .emi-result-item{background:rgba(0,0,0,.05)}
+.primary-item{background:rgba(91,143,255,.1)!important;border:1px solid rgba(91,143,255,.2)}
+.emi-label{display:block;font-size:.7rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:7px}
+.emi-value{display:block;font-family:'Syne',sans-serif;font-size:.95rem;font-weight:700}
+.chart-container{position:relative;height:200px;margin:10px 0}
+
+/* ---- UNIT CONVERTER ---- */
+.all-conversions{display:grid;gap:5px;margin-top:14px}
+.all-conversions h4{font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:8px}
+.conv-row{
+  display:flex;justify-content:space-between;padding:8px 12px;
+  background:rgba(0,0,0,.14);border-radius:6px;font-size:.82rem;
+  cursor:pointer;transition:var(--ease);
+}
+[data-theme="light"] .conv-row{background:rgba(0,0,0,.05)}
+.conv-row:hover{background:rgba(91,143,255,.1)}
+.conv-unit{color:var(--txt2)}
+.conv-val{font-weight:700}
+
+/* ---- CURRENCY ---- */
+.rate-info-bar{
+  padding:9px 13px;background:rgba(0,217,180,.08);
+  border:1px solid rgba(0,217,180,.2);border-radius:var(--r-sm);
+  margin-bottom:18px;font-size:.78rem;
+}
+#rateStatus{color:var(--cyan);font-weight:700}
+.currency-row{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:end;margin-bottom:4px}
+.currency-col{display:flex;flex-direction:column;gap:6px}
+.currency-col label{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.055em;color:var(--txt2)}
+.currency-search{padding:8px 12px;font-size:.82rem}
+.select-field[size]{background:var(--card);border-color:var(--border);overflow-y:auto}
+.select-field[size] option{padding:7px 10px;font-size:.82rem;background:var(--bg2);color:var(--txt)}
+.select-field[size] option:checked{background:var(--blue);color:#fff}
+.swap-btn{
+  padding:11px;border-radius:var(--r-sm);background:var(--card);
+  border:1px solid var(--border);color:var(--txt);
+  font-size:1.1rem;transition:var(--ease);align-self:end;
+}
+.swap-btn:hover{background:var(--blue);color:#fff;transform:rotate(180deg)}
+.currency-result-display{font-family:'Syne',sans-serif;font-size:1.45rem;font-weight:700;margin:14px 0}
+.currency-result-display .row{display:flex;align-items:center;gap:10px;margin:6px 0}
+.currency-result-display .row img{width:26px;height:18px;object-fit:cover;border-radius:3px;flex-shrink:0}
+.currency-result-display .equals{font-size:.9rem;color:var(--muted);font-weight:400;font-family:'Nunito',sans-serif}
+.exchange-rate-info{font-size:.82rem;color:var(--txt2);margin-bottom:14px;line-height:1.6}
+.popular-rates h4{font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:8px}
+.pop-row{
+  display:flex;align-items:center;gap:10px;
+  padding:7px 12px;background:rgba(0,0,0,.14);
+  border-radius:6px;font-size:.82rem;margin-bottom:4px;
+}
+[data-theme="light"] .pop-row{background:rgba(0,0,0,.05)}
+.pop-row img{width:22px;height:15px;object-fit:cover;border-radius:2px;flex-shrink:0}
+.pop-row .pop-name{flex:1;color:var(--txt2)}
+.pop-row .pop-val{font-weight:700}
+
+/* ---- HISTORY ---- */
+.history-card{padding:0;overflow:hidden}
+.history-top{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:18px 22px;border-bottom:1px solid var(--border);
+}
+.history-count{font-size:.84rem;color:var(--txt2);font-weight:600}
+.history-list{padding:14px;display:grid;gap:9px;max-height:600px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+.history-list::-webkit-scrollbar{width:5px} .history-list::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px} .h-item{ display:flex;align-items:center;gap:12px; padding:13px 15px;background:rgba(0,0,0,.15); border-radius:var(--r-md);transition:var(--ease); } [data-theme="light"] .h-item{background:rgba(0,0,0,.05)} .h-item:hover{background:rgba(91,143,255,.07)} .h-icon{font-size:1.55rem;flex-shrink:0} .h-body{flex:1;min-width:0} .h-type{font-size:.68rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);display:block} .h-result{font-size:.88rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;margin:3px 0} .h-date{font-size:.7rem;color:var(--muted);display:block} .h-del{color:var(--muted);font-size:.88rem;padding:6px;transition:var(--ease);flex-shrink:0} .h-del:hover{color:#ff6b6b} .history-empty{text-align:center;padding:55px 20px;color:var(--muted)} .history-empty .ei{font-size:3rem;display:block;margin-bottom:12px} .history-empty p{margin:4px 0;font-size:.88rem} /* ---- TOAST ---- */ .toast{ position:fixed;bottom:22px;left:50%; transform:translateX(-50%) translateY(100px); background:var(--bg2);color:var(--txt); border:1px solid var(--border);padding:11px 24px; border-radius:50px;font-size:.84rem;font-weight:700; box-shadow:var(--shadow-lg);z-index:9999; transition:transform .3s ease;backdrop-filter:blur(16px); white-space:nowrap;pointer-events:none; } .toast.show{transform:translateX(-50%) translateY(0)} .toast.success{border-color:rgba(63,185,80,.5);color:#3fb950} .toast.error{border-color:rgba(255,107,107,.5);color:#ff6b6b} .toast.info{border-color:rgba(91,143,255,.4);color:var(--blue)} /* ---- FOOTER ---- */ .footer{background:var(--bg2);border-top:1px solid var(--border);padding:48px 24px 24px;position:relative;z-index:1} .footer-inner{max-width:1240px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:48px;padding-bottom:28px} .footer-brand p{font-size:.84rem;color:var(--muted);margin-top:10px;line-height:1.55;max-width:280px} .footer-links{display:flex;gap:48px;justify-content:flex-end} .footer-col h3{font-size:.74rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:14px;font-family:'Nunito',sans-serif;font-weight:700} .footer-col a{display:block;font-size:.84rem;color:var(--txt2);margin-bottom:9px;transition:var(--ease)} .footer-col a:hover{color:var(--blue)} .footer-bottom{max-width:1240px;margin:0 auto;padding-top:22px;border-top:1px solid var(--border);text-align:center;font-size:.76rem;color:var(--muted)} /* ---- MODAL ---- */ .modal-overlay{ position:fixed;inset:0;background:rgba(0,0,0,.62); z-index:2000;display:none;align-items:center; justify-content:center;padding:20px; backdrop-filter:blur(5px); } .modal-overlay.open{display:flex;animation:fadeUp .25s ease} .modal-box{max-width:480px;width:100%;max-height:82vh;overflow-y:auto;position:relative} .modal-close{position:absolute;top:14px;right:14px;font-size:.95rem;color:var(--muted);padding:6px;transition:var(--ease)} .modal-close:hover{color:var(--txt)} .modal-box h3{font-size:1.2rem;font-weight:700;margin-bottom:14px;padding-right:28px} .modal-box p{font-size:.84rem;color:var(--txt2);line-height:1.65;margin-bottom:10px} /* ---- RESPONSIVE ---- */ @media(max-width:860px){ .calc-body{grid-template-columns:1fr} .nav{ display:none;position:fixed;top:70px;left:0;right:0; background:var(--bg2);border-bottom:1px solid var(--border); padding:12px;flex-direction:column;gap:3px;z-index:999; animation:fadeUp .2s ease; } .nav.open{display:flex} .hamburger{display:flex} .footer-inner{grid-template-columns:1fr;gap:28px} .footer-links{justify-content:flex-start} .emi-grid{grid-template-columns:1fr;gap:8px} .currency-row{grid-template-columns:1fr;gap:8px} .swap-btn{width:100%;justify-self:center} .categories-grid{grid-template-columns:1fr} } @media(max-width:580px){ .hero{padding:44px 16px 36px} .hero-title{font-size:1.75rem} .categories-grid{padding:0 16px 56px} .calc-page{padding:22px 14px 56px} .glass-card{padding:18px 15px} .age-display{gap:7px} .age-unit-val{font-size:1.6rem} .form-row{grid-template-columns:1fr} .result-actions{gap:5px} .action-btn{font-size:.7rem;padding:7px 6px} .tab-btn{font-size:.73rem;padding:6px 7px} .emi-label{font-size:.64rem} .emi-value{font-size:.88rem} }
+
+
+
+</style>
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<header class="header" id="header">
+  <div class="header-inner">
+    <a href="#" class="logo" onclick="return showSection('home')">
+      <span class="logo-icon">⚡</span>
+      <span class="logo-text">SmartCalc<span class="logo-accent">Hub</span></span>
+    </a>
+    <nav class="nav" id="mainNav" role="navigation" aria-label="Main navigation">
+      <a href="#" class="nav-link" onclick="return showSection('home')">Home</a>
+      <a href="#" class="nav-link" onclick="return showSection('age-calc')">Age</a>
+      <a href="#" class="nav-link" onclick="return showSection('percentage-calc')">Percentage</a>
+      <a href="#" class="nav-link" onclick="return showSection('bmi-calc')">BMI</a>
+      <a href="#" class="nav-link" onclick="return showSection('emi-calc')">EMI</a>
+      <a href="#" class="nav-link" onclick="return showSection('unit-converter')">Units</a>
+      <a href="#" class="nav-link" onclick="return showSection('currency-converter')">Currency</a>
+      <a href="#" class="nav-link" onclick="return showSection('history')">History</a>
+    </nav>
+    <div class="header-actions">
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark/light mode" title="Toggle theme">
+        <span class="theme-icon" id="themeIcon">🌙</span>
+      </button>
+      <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- ===== MAIN ===== -->
+<main class="main" id="main">
+
+  <!-- ==================== HOME ==================== -->
+  <section id="home" class="section active" role="main">
+    <div class="hero">
+      <div class="hero-badge">✨ 6 Calculators · Free · No Ads</div>
+      <h1 class="hero-title">All-in-One Calculator<br><span class="gradient-text">for Everyone</span></h1>
+      <p class="hero-subtitle">For Students, Children, Adults &amp; Professionals — everything you need in one beautiful place.</p>
+      <div class="search-container" role="search">
+        <span class="search-icon" aria-hidden="true">🔍</span>
+        <input type="search" id="searchInput" class="search-input" placeholder="Search calculators…" aria-label="Search calculators" autocomplete="off">
+        <button class="search-clear" id="searchClear" aria-label="Clear search">✕</button>
+      </div>
+    </div>
+
+    <div class="categories-grid" id="categoriesGrid">
+
+      <article class="calc-card" data-calc="age-calc" data-name="Age Calculator" data-tags="age birthday date birth year month day old future prediction">
+        <button class="fav-btn" data-calc="age-calc" aria-label="Add to favorites">♡</button>
+        <div class="calc-card-icon" aria-hidden="true">🎂</div>
+        <h2 class="calc-card-title">Age Calculator</h2>
+        <p class="calc-card-desc">Exact age in years, months &amp; days. Future age prediction &amp; birthday countdown included.</p>
+        <div class="calc-card-tags" aria-label="Tags"><span>Years</span><span>Months</span><span>Days</span></div>
+        <button class="calc-card-btn" onclick="showSection('age-calc')">Open Calculator →</button>
+      </article>
+
+      <article class="calc-card" data-calc="percentage-calc" data-name="Percentage Calculator" data-tags="percent percentage increase decrease difference of value">
+        <button class="fav-btn" data-calc="percentage-calc" aria-label="Add to favorites">♡</button>
+        <div class="calc-card-icon" aria-hidden="true">📊</div>
+        <h2 class="calc-card-title">Percentage Calculator</h2>
+        <p class="calc-card-desc">X% of Y, percentage increase, decrease &amp; difference. Quick &amp; accurate.</p>
+        <div class="calc-card-tags"><span>Percent</span><span>Increase</span><span>Decrease</span></div>
+        <button class="calc-card-btn" onclick="showSection('percentage-calc')">Open Calculator →</button>
+      </article>
+
+      <article class="calc-card" data-calc="bmi-calc" data-name="BMI Calculator" data-tags="bmi body mass index weight height health underweight normal overweight obese">
+        <button class="fav-btn" data-calc="bmi-calc" aria-label="Add to favorites">♡</button>
+        <div class="calc-card-icon" aria-hidden="true">⚖️</div>
+        <h2 class="calc-card-title">BMI Calculator</h2>
+        <p class="calc-card-desc">Body Mass Index for adults &amp; children. Metric &amp; imperial. Health category with advice.</p>
+        <div class="calc-card-tags"><span>BMI</span><span>Health</span><span>Metric/Imperial</span></div>
+        <button class="calc-card-btn" onclick="showSection('bmi-calc')">Open Calculator →</button>
+      </article>
+
+      <article class="calc-card" data-calc="emi-calc" data-name="EMI Calculator" data-tags="emi loan interest rate tenure monthly payment bank mortgage">
+        <button class="fav-btn" data-calc="emi-calc" aria-label="Add to favorites">♡</button>
+        <div class="calc-card-icon" aria-hidden="true">🏦</div>
+        <h2 class="calc-card-title">EMI Calculator</h2>
+        <p class="calc-card-desc">Monthly EMI, total interest &amp; total payment with interactive doughnut chart.</p>
+        <div class="calc-card-tags"><span>Loan</span><span>EMI</span><span>Chart</span></div>
+        <button class="calc-card-btn" onclick="showSection('emi-calc')">Open Calculator →</button>
+      </article>
+
+      <article class="calc-card" data-calc="unit-converter" data-name="Unit Converter" data-tags="unit convert length weight temperature area volume speed time data storage km miles kg lb celsius fahrenheit">
+        <button class="fav-btn" data-calc="unit-converter" aria-label="Add to favorites">♡</button>
+        <div class="calc-card-icon" aria-hidden="true">📐</div>
+        <h2 class="calc-card-title">Unit Converter</h2>
+        <p class="calc-card-desc">Length, Weight, Temperature, Area, Volume, Speed, Time &amp; Data Storage — 8 categories.</p>
+        <div class="calc-card-tags"><span>Length</span><span>Weight</span><span>Temp</span></div>
+        <button class="calc-card-btn" onclick="showSection('unit-converter')">Open Calculator →</button>
+      </article>
+
+      <article class="calc-card" data-calc="currency-converter" data-name="Currency Converter" data-tags="currency exchange rate forex usd eur gbp inr live real-time flag">
+        <button class="fav-btn" data-calc="currency-converter" aria-label="Add to favorites">♡</button>
+        <div class="calc-card-icon" aria-hidden="true">💱</div>
+        <h2 class="calc-card-title">Currency Converter</h2>
+        <p class="calc-card-desc">Live exchange rates. 30+ world currencies with country flags &amp; quick comparison.</p>
+        <div class="calc-card-tags"><span>Live Rates</span><span>30+ Currencies</span><span>Flags</span></div>
+        <button class="calc-card-btn" onclick="showSection('currency-converter')">Open Calculator →</button>
+      </article>
+
+    </div>
+    <p id="noResultsMsg" class="no-results" style="display:none;">No calculators found for "<span id="noResultsQuery"></span>". Try a different keyword.</p>
+  </section>
+
+  <!-- ==================== AGE CALCULATOR ==================== -->
+  <section id="age-calc" class="section" aria-label="Age Calculator">
+    <div class="calc-page">
+      <div class="calc-header">
+        <button class="back-btn" onclick="showSection('home')" aria-label="Back to home">← Back</button>
+        <div class="calc-title-group">
+          <span aria-hidden="true">🎂</span>
+          <h2>Age Calculator</h2>
+        </div>
+      </div>
+      <div class="calc-body">
+        <div class="calc-input-panel glass-card">
+          <div class="form-group">
+            <label for="dob">Date of Birth <span class="required">*</span></label>
+            <input type="date" id="dob" class="input-field" aria-required="true">
+          </div>
+          <div class="form-group">
+            <label for="calcDate">Calculate Age As Of</label>
+            <input type="date" id="calcDate" class="input-field">
+          </div>
+          <div class="form-group">
+            <label for="futureDate">Future Age Prediction <span class="optional">(optional)</span></label>
+            <input type="date" id="futureDate" class="input-field">
+          </div>
+          <div class="btn-group">
+            <button class="btn-primary" onclick="calculateAge()">Calculate Age</button>
+            <button class="btn-secondary" onclick="resetCalc('age')">Reset</button>
+          </div>
+        </div>
+        <div id="ageResult" class="calc-result-panel" style="display:none;">
+          <div class="glass-card result-card">
+            <h3>Your Age</h3>
+            <div class="age-display" id="ageDisplay"></div>
+            <div class="age-details" id="ageDetails"></div>
+            <div class="future-age" id="futureAgeDisplay"></div>
+            <div class="result-actions">
+              <button class="action-btn" onclick="copyResult('age')">📋 Copy</button>
+              <button class="action-btn" onclick="shareResult('age')">🔗 Share</button>
+              <button class="action-btn" onclick="downloadPDF('age')">⬇️ PDF</button>
+              <button class="action-btn" onclick="saveHistory('age')">💾 Save</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== PERCENTAGE CALCULATOR ==================== -->
+  <section id="percentage-calc" class="section" aria-label="Percentage Calculator">
+    <div class="calc-page">
+      <div class="calc-header">
+        <button class="back-btn" onclick="showSection('home')">← Back</button>
+        <div class="calc-title-group"><span aria-hidden="true">📊</span><h2>Percentage Calculator</h2></div>
+      </div>
+      <div class="calc-body">
+        <div class="calc-input-panel glass-card">
+          <div class="tab-group" id="percentageTabs" role="tablist" aria-label="Percentage type">
+            <button class="tab-btn active" role="tab" aria-selected="true" data-tab="whatpercent" onclick="switchTab('percentage','whatpercent')">X% of Y</button>
+            <button class="tab-btn" role="tab" aria-selected="false" data-tab="increase" onclick="switchTab('percentage','increase')">% Increase</button>
+            <button class="tab-btn" role="tab" aria-selected="false" data-tab="decrease" onclick="switchTab('percentage','decrease')">% Decrease</button>
+            <button class="tab-btn" role="tab" aria-selected="false" data-tab="difference" onclick="switchTab('percentage','difference')">% Difference</button>
+          </div>
+          <!-- What is X% of Y -->
+          <div class="tab-content active" id="tab-whatpercent" role="tabpanel">
+            <div class="form-group"><label for="pct-x">Percentage (X %)</label><input type="number" id="pct-x" class="input-field" placeholder="e.g. 20" min="0"></div>
+            <div class="form-group"><label for="pct-y">of Value (Y)</label><input type="number" id="pct-y" class="input-field" placeholder="e.g. 500"></div>
+          </div>
+          <!-- % Increase -->
+          <div class="tab-content" id="tab-increase" role="tabpanel">
+            <div class="form-group"><label for="inc-orig">Original Value</label><input type="number" id="inc-orig" class="input-field" placeholder="e.g. 100"></div>
+            <div class="form-group"><label for="inc-new">New Value</label><input type="number" id="inc-new" class="input-field" placeholder="e.g. 150"></div>
+          </div>
+          <!-- % Decrease -->
+          <div class="tab-content" id="tab-decrease" role="tabpanel">
+            <div class="form-group"><label for="dec-orig">Original Value</label><input type="number" id="dec-orig" class="input-field" placeholder="e.g. 200"></div>
+            <div class="form-group"><label for="dec-new">New Value</label><input type="number" id="dec-new" class="input-field" placeholder="e.g. 150"></div>
+          </div>
+          <!-- % Difference -->
+          <div class="tab-content" id="tab-difference" role="tabpanel">
+            <div class="form-group"><label for="diff-v1">Value 1</label><input type="number" id="diff-v1" class="input-field" placeholder="e.g. 80"></div>
+            <div class="form-group"><label for="diff-v2">Value 2</label><input type="number" id="diff-v2" class="input-field" placeholder="e.g. 100"></div>
+          </div>
+          <div class="btn-group">
+            <button class="btn-primary" onclick="calculatePercentage()">Calculate</button>
+            <button class="btn-secondary" onclick="resetCalc('percentage')">Reset</button>
+          </div>
+        </div>
+        <div id="percentageResult" class="calc-result-panel" style="display:none;">
+          <div class="glass-card result-card">
+            <h3>Result</h3>
+            <div class="result-big" id="pctResultValue"></div>
+            <div class="result-formula" id="pctFormula"></div>
+            <div class="result-actions">
+              <button class="action-btn" onclick="copyResult('percentage')">📋 Copy</button>
+              <button class="action-btn" onclick="shareResult('percentage')">🔗 Share</button>
+              <button class="action-btn" onclick="downloadPDF('percentage')">⬇️ PDF</button>
+              <button class="action-btn" onclick="saveHistory('percentage')">💾 Save</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== BMI CALCULATOR ==================== -->
+  <section id="bmi-calc" class="section" aria-label="BMI Calculator">
+    <div class="calc-page">
+      <div class="calc-header">
+        <button class="back-btn" onclick="showSection('home')">← Back</button>
+        <div class="calc-title-group"><span aria-hidden="true">⚖️</span><h2>BMI Calculator</h2></div>
+      </div>
+      <div class="calc-body">
+        <div class="calc-input-panel glass-card">
+          <div class="unit-toggle-group">
+            <label>Unit System:</label>
+            <div class="toggle-sw-group" role="group" aria-label="Unit system">
+              <button id="bmiMetricBtn" class="toggle-opt active" onclick="switchBMIUnit('metric')">Metric (cm/kg)</button>
+              <button id="bmiImperialBtn" class="toggle-opt" onclick="switchBMIUnit('imperial')">Imperial (ft·in/lb)</button>
+            </div>
+          </div>
+          <!-- Metric -->
+          <div id="bmiMetricInputs">
+            <div class="form-group"><label for="heightCm">Height (cm)</label><input type="number" id="heightCm" class="input-field" placeholder="e.g. 170" min="50" max="250"></div>
+            <div class="form-group"><label for="weightKg">Weight (kg)</label><input type="number" id="weightKg" class="input-field" placeholder="e.g. 65" min="1" max="500"></div>
+          </div>
+          <!-- Imperial -->
+          <div id="bmiImperialInputs" style="display:none;">
+            <div class="form-row">
+              <div class="form-group"><label for="heightFt">Feet</label><input type="number" id="heightFt" class="input-field" placeholder="5" min="1" max="8"></div>
+              <div class="form-group"><label for="heightIn">Inches</label><input type="number" id="heightIn" class="input-field" placeholder="8" min="0" max="11"></div>
+            </div>
+            <div class="form-group"><label for="weightLb">Weight (lb)</label><input type="number" id="weightLb" class="input-field" placeholder="e.g. 143" min="1" max="1000"></div>
+          </div>
+          <div class="form-group"><label for="bmiAge">Age <span class="optional">(optional)</span></label><input type="number" id="bmiAge" class="input-field" placeholder="e.g. 25" min="2" max="120"></div>
+          <div class="btn-group">
+            <button class="btn-primary" onclick="calculateBMI()">Calculate BMI</button>
+            <button class="btn-secondary" onclick="resetCalc('bmi')">Reset</button>
+          </div>
+        </div>
+        <div id="bmiResult" class="calc-result-panel" style="display:none;">
+          <div class="glass-card result-card">
+            <h3>BMI Result</h3>
+            <div class="bmi-score" id="bmiScore"></div>
+            <div class="bmi-category" id="bmiCategory"></div>
+            <div class="bmi-meter-wrap">
+              <div class="bmi-meter">
+                <div class="bmi-meter-pointer" id="bmiPointer"></div>
+              </div>
+              <div class="bmi-meter-labels"><span>Underweight</span><span>Normal</span><span>Overweight</span><span>Obese</span></div>
+            </div>
+            <div class="bmi-table" id="bmiTable"></div>
+            <div class="result-actions">
+              <button class="action-btn" onclick="copyResult('bmi')">📋 Copy</button>
+              <button class="action-btn" onclick="shareResult('bmi')">🔗 Share</button>
+              <button class="action-btn" onclick="downloadPDF('bmi')">⬇️ PDF</button>
+              <button class="action-btn" onclick="saveHistory('bmi')">💾 Save</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+<!-- ==================== EMI CALCULATOR ==================== --> <section id="emi-calc" class="section" aria-label="EMI Calculator"> <div class="calc-page"> <div class="calc-header"> <button class="back-btn" onclick="showSection('home')">← Back</button> <div class="calc-title-group"><span aria-hidden="true">🏦</span><h2>EMI Calculator</h2></div> </div> <div class="calc-body"> <div class="calc-input-panel glass-card"> <div class="form-group"> <label for="loanAmount">Loan Amount (₹)</label> <input type="number" id="loanAmount" class="input-field" placeholder="e.g. 500000" min="1000"> <input type="range" id="loanSlider" class="range-slider" min="10000" max="10000000" step="10000" value="500000" aria-label="Loan amount slider"> <div class="range-labels"><span>₹10K</span><span id="loanSliderVal">₹5,00,000</span><span>₹1Cr</span></div> </div> <div class="form-group"> <label for="interestRate">Annual Interest Rate (%)</label> <input type="number" id="interestRate" class="input-field" placeholder="e.g. 8.5" min="0.1" max="50" step="0.1"> <input type="range" id="rateSlider" class="range-slider" min="1" max="30" step="0.1" value="8.5" aria-label="Interest rate slider"> <div class="range-labels"><span>1%</span><span id="rateSliderVal">8.5%</span><span>30%</span></div> </div> <div class="form-group"> <label for="loanTenure">Loan Tenure (Years)</label> <input type="number" id="loanTenure" class="input-field" placeholder="e.g. 5" min="1" max="30"> <input type="range" id="tenureSlider" class="range-slider" min="1" max="30" step="1" value="5" aria-label="Tenure slider"> <div class="range-labels"><span>1 yr</span><span id="tenureSliderVal">5 yrs</span><span>30 yrs</span></div> </div> <div class="btn-group"> <button class="btn-primary" onclick="calculateEMI()">Calculate EMI</button> <button class="btn-secondary" onclick="resetCalc('emi')">Reset</button> </div> </div> <div id="emiResult" class="calc-result-panel" style="display:none;"> <div class="glass-card result-card"> <div class="emi-grid"> <div class="emi-result-item primary-item"> <span class="emi-label">Monthly EMI</span> <span class="emi-value gradient-text" id="emiMonthly"></span> </div> <div class="emi-result-item"> <span class="emi-label">Total Interest</span> <span class="emi-value" id="emiInterest"></span> </div> <div class="emi-result-item"> <span class="emi-label">Total Payment</span> <span class="emi-value" id="emiTotal"></span> </div> </div> <div class="chart-container"><canvas id="emiChart" aria-label="EMI breakdown chart"></canvas></div> <div class="result-actions"> <button class="action-btn" onclick="copyResult('emi')">📋 Copy</button> <button class="action-btn" onclick="shareResult('emi')">🔗 Share</button> <button class="action-btn" onclick="downloadPDF('emi')">⬇️ PDF</button> <button class="action-btn" onclick="saveHistory('emi')">💾 Save</button> </div> </div> </div> </div> </div> </section> <!-- ==================== UNIT CONVERTER ==================== --> <section id="unit-converter" class="section" aria-label="Unit Converter"> <div class="calc-page"> <div class="calc-header"> <button class="back-btn" onclick="showSection('home')">← Back</button> <div class="calc-title-group"><span aria-hidden="true">📐</span><h2>Unit Converter</h2></div> </div> <div class="calc-body"> <div class="calc-input-panel glass-card"> <div class="form-group"> <label for="unitCategory">Category</label> <select id="unitCategory" class="input-field select-field" onchange="updateUnitOptions()" aria-label="Unit category"> <option value="length">📏 Length</option> <option value="weight">⚖️ Weight</option> <option value="temperature">🌡️ Temperature</option> <option value="area">🗺️ Area</option> <option value="volume">🧪 Volume</option> <option value="speed">🚀 Speed</option> <option value="time">⏱️ Time</option> <option value="data">💾 Data Storage</option> </select> </div> <div class="form-row"> <div class="form-group"> <label for="unitFrom">From</label> <select id="unitFrom" class="input-field select-field" aria-label="From unit"></select> </div> <div class="form-group"> <label for="unitTo">To</label> <select id="unitTo" class="input-field select-field" aria-label="To unit"></select> </div> </div> <div class="form-group"> <label for="unitValue">Value</label> <input type="number" id="unitValue" class="input-field" placeholder="Enter value to convert" oninput="calculateUnit()"> </div> <div class="btn-group"> <button class="btn-primary" onclick="calculateUnit()">Convert</button> <button class="btn-secondary" onclick="swapUnits()">⇄ Swap</button> <button class="btn-secondary" onclick="resetCalc('unit')">Reset</button> </div> </div> <div id="unitResult" class="calc-result-panel" style="display:none;"> <div class="glass-card result-card"> <h3>Conversion Result</h3> <div class="result-big" id="unitResultValue"></div> <div class="result-formula" id="unitFormula"></div> <div id="allConversions" class="all-conversions"></div> <div class="result-actions"> <button class="action-btn" onclick="copyResult('unit')">📋 Copy</button> <button class="action-btn" onclick="shareResult('unit')">🔗 Share</button> <button class="action-btn" onclick="downloadPDF('unit')">⬇️ PDF</button> <button class="action-btn" onclick="saveHistory('unit')">💾 Save</button> </div> </div> </div> </div> </div> </section> 
+<!-- ==================== CURRENCY CONVERTER ==================== --> 
+<section id="currency-converter" class="section" aria-label="Currency Converter"> 
+  <div class="calc-page">
+     <div class="calc-header"> 
+      <button class="back-btn" onclick="showSection('home')">← Back</button>
+       <div class="calc-title-group">
+        <span aria-hidden="true">💱</span>
+        <h2>Currency Converter</h2></div> </div>
+         <div class="calc-body">
+           <div class="calc-input-panel glass-card"> 
+            <div class="rate-info-bar" id="rateInfoBar">
+               <span id="rateStatus">⌛ Loading live rates…</span> </div> 
+               <div class="form-group"> 
+                <label for="currencyAmount">Amount</label>
+                 <input type="number" id="currencyAmount" class="input-field" placeholder="e.g. 100" min="0" step="any"> </div>
+                  <div class="currency-row">
+                     <div class="currency-col">
+                       <label for="currencySearch1">From Currency</label>
+                        <input type="text" id="currencySearch1" class="input-field currency-search" placeholder="Search…" autocomplete="off" aria-label="Search from currency"> <select id="currencyFrom" class="input-field select-field" size="5" aria-label="From currency"></select> </div> <button class="swap-btn" onclick="swapCurrencies()" aria-label="Swap currencies" title="Swap">⇄</button> <div class="currency-col"> <label for="currencySearch2">To Currency</label> <input type="text" id="currencySearch2" class="input-field currency-search" placeholder="Search…" autocomplete="off" aria-label="Search to currency"> <select id="currencyTo" class="input-field select-field" size="5" aria-label="To currency"></select> </div> </div> <div class="btn-group"> <button class="btn-primary" onclick="convertCurrency()">Convert</button> <button class="btn-secondary" onclick="refreshRates()">🔄 Refresh Rates</button> <button class="btn-secondary" onclick="resetCalc('currency')">Reset</button> </div> </div> <div id="currencyResult" class="calc-result-panel" style="display:none;"> <div class="glass-card result-card"> <h3>Exchange Result</h3> <div id="currencyResultDisplay" class="currency-result-display"></div> <div id="exchangeRateInfo" class="exchange-rate-info"></div> <div id="popularRates" class="popular-rates"></div> <div class="result-actions"> <button class="action-btn" onclick="copyResult('currency')">📋 Copy</button> <button class="action-btn" onclick="shareResult('currency')">🔗 Share</button> <button class="action-btn" onclick="downloadPDF('currency')">⬇️ PDF</button> <button class="action-btn" onclick="saveHistory('currency')">💾 Save</button> </div> </div> </div> </div> </div> </section> <!-- ==================== HISTORY ==================== -->
+ <section id="history" class="section" aria-label="Calculation History">
+   <div class="calc-page"> <div class="calc-header"> <button class="back-btn" onclick="showSection('home')">← Back</button> <div class="calc-title-group"><span aria-hidden="true">📜</span><h2>Calculation History</h2></div> </div> <div class="glass-card history-card"> <div class="history-top"> <span id="historyCount" class="history-count">0 saved calculations</span> <button class="btn-danger" onclick="clearHistory()">🗑️ Clear All</button> </div> <div id="historyList" class="history-list" role="list"></div> </div> </div> </section> </main> <!-- ===== TOAST ===== --> <div class="toast" id="toast" role="status" aria-live="polite"></div> <!-- ===== FOOTER ===== --> <footer class="footer" role="contentinfo"> <div class="footer-inner"> <div class="footer-brand"> <div class="logo" style="margin-bottom:10px;"> <span class="logo-icon">⚡</span> <span class="logo-text">SmartCalc<span class="logo-accent">Hub</span></span> </div> <p>Your free, fast, and beautiful all-in-one calculator suite for students, children, adults &amp; professionals.</p> </div> <div class="footer-links"> <div class="footer-col"> <h3>Calculators</h3> <a href="#" onclick="return showSection('age-calc')">Age Calculator</a> <a href="#" onclick="return showSection('percentage-calc')">Percentage</a> <a href="#" onclick="return showSection('bmi-calc')">BMI Calculator</a> <a href="#" onclick="return showSection('emi-calc')">EMI Calculator</a> <a href="#" onclick="return showSection('unit-converter')">Unit Converter</a> <a href="#" onclick="return showSection('currency-converter')">Currency</a> </div> <div class="footer-col"> <h3>Company</h3> <a href="#" onclick="return showModal('about')">About Us</a> <a href="#" onclick="return showModal('privacy')">Privacy Policy</a> <a href="#" onclick="return showModal('contact')">Contact Us</a> <a href="#" onclick="return showModal('disclaimer')">Disclaimer</a> </div> </div> </div> <div class="footer-bottom"> <p>© 2024 SmartCalc Hub · All rights reserved · Made with ❤️ from MADHU.. for Everyone</p> </div> </footer> <!-- ===== MODAL ===== --> <div class="modal-overlay" id="modalOverlay" role="dialog" aria-modal="true" onclick="closeModal()"> <div class="modal-box glass-card" onclick="event.stopPropagation()"> <button class="modal-close" onclick="closeModal()" aria-label="Close dialog">✕</button> <h3 id="modalTitle"></h3> <div id="modalBody"></div> </div> </div>
+
+ <script src="script.js" >
+  
+</script> 
+</body> 
+</html>
